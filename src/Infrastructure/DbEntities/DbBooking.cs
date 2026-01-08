@@ -1,0 +1,22 @@
+using Cinema.Domain.Enums;
+
+namespace Cinema.Infrastructure.DbEntities;
+
+public class DbBooking
+{
+    public Guid Id { get; set; }
+
+    public Guid UserId { get; set; }
+
+    public DbUser User { get; set; } = null!;
+
+    public Guid SessionId { get; set; }
+
+    public DbSession Session { get; set; } = null!;
+
+    public decimal Cost { get; set; }
+
+    public Status Status { get; set; }
+
+    public List<Guid> Seats { get; set; } = new();
+}
