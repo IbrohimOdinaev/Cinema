@@ -1,4 +1,3 @@
-using Cinema.Infrastructure.MappingProfiles;
 using Cinema.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(

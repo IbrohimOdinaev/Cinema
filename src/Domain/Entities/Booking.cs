@@ -8,11 +8,11 @@ public class Booking
 
     public Guid UserId { get; set; }
 
-    public User User { get; set; } = new();
+    public User? User { get; set; }
 
     public Guid SessionId { get; set; }
 
-    public Session Session { get; set; } = new();
+    public Session? Session { get; set; }
 
     public decimal Cost { get; set; }
 

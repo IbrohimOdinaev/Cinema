@@ -8,11 +8,11 @@ public class DbBooking
 
     public Guid UserId { get; set; }
 
-    public DbUser User { get; set; } = null!;
+    public DbUser? User { get; set; }
 
     public Guid SessionId { get; set; }
 
-    public DbSession Session { get; set; } = null!;
+    public DbSession? Session { get; set; }
 
     public decimal Cost { get; set; }
 

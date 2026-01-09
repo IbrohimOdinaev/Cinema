@@ -13,7 +13,7 @@ public class User
 
     public Role Role { get; set; }
 
-    public Wallet Wallet { get; set; } = new();
+    public Wallet Wallet { get; set; } = new(0);
 
     public List<Booking> Bookings { get; set; } = new();
 }

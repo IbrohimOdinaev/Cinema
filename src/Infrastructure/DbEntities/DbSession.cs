@@ -8,13 +8,13 @@ public class DbSession
 
     public Guid FilmId { get; set; }
 
-    public DbHall Hall { get; set; } = null!;
+    public DbHall? Hall { get; set; }
 
-    public DbFilm Film { get; set; } = null!;
+    public DbFilm? Film { get; set; }
 
-    public TimeOnly Start { get; set; }
+    public DateTime Start { get; set; }
 
-    public TimeOnly End { get; set; }
+    public DateTime End { get; set; }
 
     public List<DbBooking> Bookings { get; set; } = new();
 }

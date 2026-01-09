@@ -13,18 +13,12 @@ public class SessionConfiguration : IEntityTypeConfiguration<DbSession>
         builder
           .Property(s => s.Start)
           .IsRequired()
-          .HasConversion(
-              t => t.ToTimeSpan(),
-              t => TimeOnly.FromTimeSpan(t)
-              );
+          .HasColumnType("timestamp without time zone");
 
         builder
           .Property(s => s.End)
           .IsRequired()
-          .HasConversion(
-              t => t.ToTimeSpan(),
-              t => TimeOnly.FromTimeSpan(t)
-              );
+          .HasColumnType("timestamp without time zone");
 
         builder
           .HasMany(s => s.Bookings)

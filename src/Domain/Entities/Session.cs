@@ -8,13 +8,13 @@ public class Session
 
     public Guid FilmId { get; set; }
 
-    public Film Film { get; set; } = new();
+    public Film? Film { get; set; }
 
-    public Hall Hall { get; set; } = new();
+    public Hall? Hall { get; set; }
 
-    public TimeOnly Start { get; set; }
+    public DateTime Start { get; set; }
 
-    public TimeOnly End { get; set; }
+    public DateTime End { get; set; }
 
     public List<Booking> Bookings { get; set; } = new();
 }
