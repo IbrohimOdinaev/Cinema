@@ -6,5 +6,5 @@ public interface IBookingRepository : IBaseRepository<Booking>
 {
     IAsyncEnumerable<Booking> GetByUserIdAsync(Guid id, CancellationToken token = default);
 
-    Task<Booking?> GetByIdWithNestedObjects(Guid id, CancellationToken token = default);
+    Task<Booking?> GetByIdWithNavigationPropertiesAsync(Guid id, CancellationToken token = default);
 }
