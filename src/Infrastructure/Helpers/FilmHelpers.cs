@@ -12,7 +12,7 @@ public static class FilmHelpers
             Id = film.Id,
             Title = film.Title,
             Price = film.Price,
-            Duratioin = film.Duration
+            Duration = film.Duration
         };
     }
 
@@ -23,7 +23,7 @@ public static class FilmHelpers
             Id = dbFilm.Id,
             Title = dbFilm.Title,
             Price = dbFilm.Price,
-            Duration = dbFilm.Duratioin
+            Duration = dbFilm.Duration
         };
     }
 }

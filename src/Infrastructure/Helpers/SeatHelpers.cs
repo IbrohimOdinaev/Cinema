@@ -11,9 +11,9 @@ public static class SeatHelpers
         {
             Id = seat.Id,
             HallId = seat.HallId,
-            Raw = seat.Row,
+            Raw = seat.Raw,
             Num = seat.Num,
-            IsOccupied = seat.IsOcuupied
+            IsOccupied = seat.IsOccupied
         };
     }
 
@@ -23,9 +23,9 @@ public static class SeatHelpers
         {
             Id = dbSeat.Id,
             HallId = dbSeat.HallId,
-            Row = dbSeat.Raw,
+            Raw = dbSeat.Raw,
             Num = dbSeat.Num,
-            IsOcuupied = dbSeat.IsOccupied
+            IsOccupied = dbSeat.IsOccupied
         };
     }
 }

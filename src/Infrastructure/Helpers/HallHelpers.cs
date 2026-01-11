@@ -5,6 +5,16 @@ namespace Cinema.Infrastructure.Helpers;
 
 public static class HallHelpers
 {
+    public static List<DbSeat> SeatsToRemove(DbHall newHall, DbHall oldHall)
+    {
+        return oldHall.Seats.Where(s => !newHall.Seats.Contains(s)).ToList();
+    }
+
+    public static List<DbSeat> SeatsToAdd(DbHall newHall, DbHall oldHall)
+    {
+        return newHall.Seats.Where(s => !oldHall.Seats.Contains(s)).ToList();
+    }
+
     public static DbHall ToDb(this Hall hall)
     {
         return new DbHall

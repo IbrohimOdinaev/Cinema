@@ -6,5 +6,5 @@ public interface IUserRepository : IBaseRepository<User>
 {
     Task<User?> GetByNameAsync(string name, CancellationToken token = default);
 
-    Task<User?> GetByIdWithNavigaionPropertyAsync(Guid id, CancellationToken tokne = default);
+    Task<User?> GetByIdWithNavigationPropertyAsync(Guid id, CancellationToken tokne = default);
 }

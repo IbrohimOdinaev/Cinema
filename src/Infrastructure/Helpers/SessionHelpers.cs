@@ -5,6 +5,16 @@ namespace Cinema.Infrastructure.Helpers;
 
 public static class SessionHelpers
 {
+    public static List<DbBooking> BookingsToRemove(DbSession newSession, DbSession oldSession)
+    {
+        return oldSession.Bookings.Where(s => !newSession.Bookings.Contains(s)).ToList();
+    }
+
+    public static List<DbBooking> BookingsToAdd(DbSession newSession, DbSession oldSession)
+    {
+        return newSession.Bookings.Where(s => !oldSession.Bookings.Contains(s)).ToList();
+    }
+
     public static DbSession ToDb(this Session session)
     {
         return new DbSession

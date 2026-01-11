@@ -58,61 +58,40 @@ public class BookingRepository : IBookingRepository
 
         dbBooking.Cost = dbBooking.CalculateBookingCost();
 
-        try
-        {
-            await _context.Bookings.AddAsync(dbBooking, token);
-            await _context.SaveChangesAsync();
+        await _context.Bookings.AddAsync(dbBooking, token);
+        await _context.SaveChangesAsync();
 
-            return entity;
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        return entity;
     }
 
     public async Task<Booking?> UpdateAsync(Booking entity, CancellationToken token)
     {
-        try
-        {
-            var booking = await _context.Bookings.FindAsync(entity.Id, token);
+        var booking = await _context.Bookings.FindAsync(entity.Id, token);
 
-            if (booking is null) return null;
+        if (booking is null) return null;
 
-            booking.Seats = entity.Seats;
-            booking.SessionId = entity.SessionId;
-            booking.Status = entity.Status;
-            booking.UserId = entity.UserId;
-            booking.Cost = booking.CalculateBookingCost();
+        booking.Seats = entity.Seats;
+        booking.SessionId = entity.SessionId;
+        booking.Status = entity.Status;
+        booking.UserId = entity.UserId;
+        booking.Cost = booking.CalculateBookingCost();
 
-            await _context.SaveChangesAsync(token);
+        await _context.SaveChangesAsync(token);
 
-            return booking.ToDomain();
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        return booking.ToDomain();
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken token)
     {
-        try
-        {
-            var booking = await _context.Bookings.FindAsync(id, token);
+        var booking = await _context.Bookings.FindAsync(id, token);
 
-            if (booking is null) return false;
+        if (booking is null) return false;
 
-            _context.Bookings.Remove(booking);
+        _context.Bookings.Remove(booking);
 
-            await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        return true;
     }
 
 

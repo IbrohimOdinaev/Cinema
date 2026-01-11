@@ -8,5 +8,5 @@ public class DbFilm
 
     public Decimal Price { get; set; }
 
-    public int Duratioin { get; set; }
+    public int Duration { get; set; }
 }

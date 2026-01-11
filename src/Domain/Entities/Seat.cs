@@ -6,9 +6,9 @@ public class Seat
 
     public Guid HallId { get; set; }
 
-    public bool IsOcuupied { get; set; }
+    public bool IsOccupied { get; set; }
 
-    public int Row { get; set; }
+    public int Raw { get; set; }
 
     public int Num { get; set; }
 }
