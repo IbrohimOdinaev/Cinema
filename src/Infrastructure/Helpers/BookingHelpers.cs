@@ -5,15 +5,15 @@ namespace Cinema.Infrastructure.Helpers;
 
 public static class BookingHelper
 {
-    public static DbBooking ToDb(this Booking booking)
+    public static DbBooking ToDb(this Booking booking, AppDbContext context)
     {
         return new DbBooking
         {
             Id = booking.Id,
             UserId = booking.UserId,
-            User = booking.User?.ToDb(),
+            User = booking.User?.ToDb(context),
             SessionId = booking.SessionId,
-            Session = booking.Session?.ToDb(),
+            Session = booking.Session?.ToDb(context),
             Cost = booking.Cost,
             Seats = booking.Seats.ToList()
         };

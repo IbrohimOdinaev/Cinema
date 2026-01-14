@@ -4,10 +4,11 @@ using Cinema.Application.Abstractions.IRepositories;
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Cinema.Application.Abstractions;
+using Cinema.Application.Services.IServices;
 
 namespace Cinema.Application.Services;
 
-public class BookingService
+public class BookingService : IBookingService
 {
     private readonly IBookingRepository _bookingRepository;
     private readonly ISessionRepository _sessionRepository;

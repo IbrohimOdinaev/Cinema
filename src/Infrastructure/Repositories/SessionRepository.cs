@@ -39,7 +39,7 @@ public class SessionRepository : ISessionRepository
 
     public async Task<Session?> CreateAsync(Session entity, CancellationToken token)
     {
-        DbSession dbSession = entity.ToDb();
+        DbSession dbSession = entity.ToDb(_context);
 
         await _context.Sessions.AddAsync(dbSession, token);
         await _context.SaveChangesAsync();
@@ -65,8 +65,8 @@ public class SessionRepository : ISessionRepository
 
         if (dbSession is null) return null;
 
-        var toAdd = BookingsToAdd(session.ToDb(), dbSession);
-        var toRemove = BookingsToRemove(session.ToDb(), dbSession);
+        var toAdd = BookingsToAdd(session.ToDb(_context), dbSession);
+        var toRemove = BookingsToRemove(session.ToDb(_context), dbSession);
 
         dbSession.Bookings.RemoveAll(s => toRemove.Contains(s));
         dbSession.Bookings.AddRange(toAdd);

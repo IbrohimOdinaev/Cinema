@@ -41,7 +41,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> CreateAsync(User entity, CancellationToken token)
     {
-        DbUser dbUser = entity.ToDb();
+        DbUser dbUser = entity.ToDb(_context);
 
         await _context.Users.AddAsync(dbUser, token);
         await _context.SaveChangesAsync();
@@ -67,8 +67,8 @@ public class UserRepository : IUserRepository
 
         if (dbUser is null) return null;
 
-        var toAdd = BookingsToAdd(user.ToDb(), dbUser);
-        var toRemove = BookingsToRemove(user.ToDb(), dbUser);
+        var toAdd = BookingsToAdd(user.ToDb(_context), dbUser);
+        var toRemove = BookingsToRemove(user.ToDb(_context), dbUser);
 
         dbUser.Bookings.RemoveAll(s => toRemove.Contains(s));
         dbUser.Bookings.AddRange(toAdd);

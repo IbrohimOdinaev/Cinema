@@ -5,13 +5,13 @@ namespace Cinema.Infrastructure.Helpers;
 
 public static class HallHelpers
 {
-    public static DbHall ToDb(this Hall hall)
+    public static DbHall ToDb(this Hall hall, AppDbContext context)
     {
         return new DbHall
         {
             Id = hall.Id,
             Title = hall.Title,
-            Seats = hall.Seats.Select(s => s.ToDb()).ToList()
+            Seats = hall.Seats.Select(s => s.ToDb(context)).ToList()
         };
     }
 

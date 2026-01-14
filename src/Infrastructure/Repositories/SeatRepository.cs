@@ -37,7 +37,7 @@ public class SeatRepository : ISeatRepository
 
     public async Task<Seat?> CreateAsync(Seat entity, CancellationToken token)
     {
-        DbSeat dbSeat = entity.ToDb();
+        DbSeat dbSeat = entity.ToDb(_context);
 
         await _context.Seats.AddAsync(dbSeat, token);
         await _context.SaveChangesAsync();

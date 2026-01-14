@@ -18,6 +18,7 @@ public class UserProfile : Profile
                     src.Role
                     ));
 
-        CreateMap<User, UserResponse>();
+        CreateMap<User, UserResponse>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Value));
     }
 }

@@ -5,8 +5,13 @@ namespace Cinema.Infrastructure.Helpers;
 
 public static class FilmHelpers
 {
-    public static DbFilm ToDb(this Film film)
+    public static DbFilm ToDb(this Film film, AppDbContext context)
     {
+        var dbFilm = context.Films.Local.FirstOrDefault(f => f.Id == film.Id);
+        if (dbFilm is not null)
+        {
+            return dbFilm;
+        }
         return new DbFilm
         {
             Id = film.Id,

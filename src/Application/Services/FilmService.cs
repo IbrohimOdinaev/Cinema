@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Cinema.Application.Services;
 
-public class FilmService
+public class FilmService : IFilmService
 {
     private readonly IFilmRepository _filmRepository;
     private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ public class FilmService
         }
     }
 
-    public async Task<Film?> CreateAsync(CreateFilmRequest filmDto, CancellationToken token)
+    public async Task<FilmResponse?> CreateAsync(CreateFilmRequest filmDto, CancellationToken token)
     {
         var film = _mapper.Map<Film>(filmDto);
 
@@ -34,7 +34,7 @@ public class FilmService
         {
             await _filmRepository.CreateAsync(film, token);
 
-            return film;
+            return _mapper.Map<FilmResponse>(film);
         }
         catch (Exception)
         {

@@ -10,4 +10,6 @@ public interface IUserService
     Task<bool> DeleteAsync(Guid id, CancellationToken token = default);
 
     IAsyncEnumerable<UserResponse> GetAllAsync(CancellationToken token);
+
+    Task<UserResponse?> AddMoney(Guid id, CancellationToken token = default);
 }

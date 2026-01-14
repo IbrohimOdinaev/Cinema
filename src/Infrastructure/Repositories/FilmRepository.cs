@@ -32,7 +32,7 @@ public class FilmRepository : IFilmRepository
 
     public async Task<Film?> CreateAsync(Film entity, CancellationToken token)
     {
-        DbFilm dbFilm = entity.ToDb();
+        DbFilm dbFilm = entity.ToDb(_context);
 
         await _context.Films.AddAsync(dbFilm, token);
         await _context.SaveChangesAsync();

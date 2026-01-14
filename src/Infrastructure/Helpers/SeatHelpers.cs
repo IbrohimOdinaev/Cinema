@@ -6,7 +6,7 @@ namespace Cinema.Infrastructure.Helpers;
 
 public static class SeatHelpers
 {
-    public static DbSeat ToDb(this Seat seat)
+    public static DbSeat ToDb(this Seat seat, AppDbContext context)
     {
         return new DbSeat
         {

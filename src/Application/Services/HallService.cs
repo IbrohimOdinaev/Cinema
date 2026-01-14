@@ -3,6 +3,7 @@ using Cinema.Application.Abstractions.IRepositories;
 using Cinema.Application.Services.IServices;
 using Cinema.Domain.Entities;
 using AutoMapper;
+using Cinema.Domain.ValueObjects;
 using System.Runtime.CompilerServices;
 
 namespace Cinema.Application.Services;
@@ -28,8 +29,7 @@ public class HallService : IHallService
 
     public async Task<HallResponse?> CreateAsync(CreateHallRequest hallDto, CancellationToken token)
     {
-        var hall = _mapper.Map<Hall>(hallDto);
-
+        Hall hall = new(hallDto.Title, hallDto.Raw, hallDto.Column);
         try
         {
             await _hallRepository.CreateAsync(hall, token);

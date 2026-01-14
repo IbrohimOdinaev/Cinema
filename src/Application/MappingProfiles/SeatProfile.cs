@@ -10,6 +10,6 @@ public class SeatProfile : Profile
     {
         CreateMap<Seat, SeatResponse>()
           .ForMember(dest => dest.Num, opt => opt.MapFrom(src => src.Position.Num))
-          .ForMember(dest => dest.Num, opt => opt.MapFrom(src => src.Position.Raw));
+          .ForMember(dest => dest.Raw, opt => opt.MapFrom(src => src.Position.Raw));
     }
 }

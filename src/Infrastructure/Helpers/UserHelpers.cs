@@ -17,7 +17,7 @@ public static class UserHelpers
     }
 
 
-    public static DbUser ToDb(this User user)
+    public static DbUser ToDb(this User user, AppDbContext context)
     {
         return new DbUser
         {
@@ -27,7 +27,7 @@ public static class UserHelpers
             PasswordHash = user.PasswordHash,
             Role = user.Role,
             WalletBalance = user.Wallet.Balance,
-            Bookings = user.Bookings.Select(b => b.ToDb()).ToList()
+            Bookings = user.Bookings.Select(b => b.ToDb(context)).ToList()
         };
     }
 

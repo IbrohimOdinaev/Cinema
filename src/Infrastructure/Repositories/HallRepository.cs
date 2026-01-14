@@ -28,7 +28,7 @@ public class HallRepository : IHallRepository
 
     public async Task<Hall?> CreateAsync(Hall entity, CancellationToken token)
     {
-        DbHall dbHall = entity.ToDb();
+        DbHall dbHall = entity.ToDb(_context);
 
         await _context.Halls.AddAsync(dbHall, token);
         await _context.SaveChangesAsync();

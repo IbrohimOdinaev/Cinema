@@ -1,5 +1,3 @@
-using Cinema.Domain.Enums;
-
 namespace Cinema.Domain.Entities;
 
 public class Booking

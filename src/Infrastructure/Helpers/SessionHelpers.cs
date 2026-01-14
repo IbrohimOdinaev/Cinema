@@ -16,18 +16,18 @@ public static class SessionHelpers
         return newSession.Bookings.Where(s => !oldSession.Bookings.Contains(s)).ToList();
     }
 
-    public static DbSession ToDb(this Session session)
+    public static DbSession ToDb(this Session session, AppDbContext context)
     {
         return new DbSession
         {
             Id = session.Id,
             HallId = session.HallId,
             FilmId = session.FilmId,
-            Hall = session.Hall?.ToDb(),
-            Film = session.Film?.ToDb(),
+            Hall = session.Hall?.ToDb(context),
+            Film = session.Film?.ToDb(context),
             Start = session.Duration.Start,
             End = session.Duration.End,
-            Bookings = session.Bookings.Select(b => b.ToDb()).ToList()
+            Bookings = session.Bookings.Select(b => b.ToDb(context)).ToList()
         };
     }
 

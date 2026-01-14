@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Cinema.Application.Services;
 
-public class SessionService
+public class SessionService : ISessionService
 {
     private readonly ISessionRepository _sessionRepository;
     private readonly IFilmRepository _filmRepository;
@@ -30,16 +30,9 @@ public class SessionService
         Session session = new(sessionDto.HallId, sessionDto.FilmId, Duration.Create(sessionDto.Start, film.Duration));
         session.AttachFilm(film);
 
-        try
-        {
-            await _sessionRepository.CreateAsync(session, token);
+        await _sessionRepository.CreateAsync(session, token);
 
-            return _mapper.Map<SessionResponse>(session);
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        return _mapper.Map<SessionResponse>(session);
     }
 
     public async IAsyncEnumerable<SessionResponse> GetAllAsync([EnumeratorCancellation] CancellationToken token)

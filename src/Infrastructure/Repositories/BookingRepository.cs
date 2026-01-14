@@ -54,7 +54,7 @@ public class BookingRepository : IBookingRepository
 
     public async Task<Booking?> CreateAsync(Booking entity, CancellationToken token)
     {
-        DbBooking dbBooking = entity.ToDb();
+        DbBooking dbBooking = entity.ToDb(_context);
 
         await _context.Bookings.AddAsync(dbBooking, token);
         await _context.SaveChangesAsync();
