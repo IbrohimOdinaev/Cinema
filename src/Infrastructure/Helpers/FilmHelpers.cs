@@ -19,12 +19,12 @@ public static class FilmHelpers
     public static Film ToDomain(this DbFilm dbFilm)
     {
         return new Film
-        {
-            Id = dbFilm.Id,
-            Title = dbFilm.Title,
-            Price = dbFilm.Price,
-            Duration = dbFilm.Duration
-        };
+        (
+            dbFilm.Id,
+            dbFilm.Title,
+            dbFilm.Price,
+            dbFilm.Duration
+        );
     }
 }
 

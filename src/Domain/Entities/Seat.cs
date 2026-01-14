@@ -1,14 +1,35 @@
+using Cinema.Domain.ValueObjects;
+
 namespace Cinema.Domain.Entities;
 
 public class Seat
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; private set; }
 
-    public Guid HallId { get; set; }
+    public Guid HallId { get; private set; }
 
-    public bool IsOccupied { get; set; }
+    public bool IsOccupied { get; private set; }
 
-    public int Raw { get; set; }
+    public Position Position { get; private set; }
 
-    public int Num { get; set; }
+    internal Seat(Guid hallId, Position position)
+    {
+        Id = Guid.NewGuid();
+        HallId = hallId;
+        IsOccupied = false;
+        Position = position;
+    }
+
+    public Seat(Guid id, Guid hallId, bool isOccupied, Position position)
+    {
+        Id = id;
+        HallId = hallId;
+        IsOccupied = isOccupied;
+        Position = position;
+    }
+
+    public void ChangeStatus(bool newStatus)
+    {
+        IsOccupied = newStatus;
+    }
 }

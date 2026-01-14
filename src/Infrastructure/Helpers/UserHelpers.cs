@@ -23,6 +23,7 @@ public static class UserHelpers
         {
             Id = user.Id,
             Name = user.Name,
+            Email = user.Email.Value,
             PasswordHash = user.PasswordHash,
             Role = user.Role,
             WalletBalance = user.Wallet.Balance,
@@ -33,14 +34,15 @@ public static class UserHelpers
     public static User ToDomain(this DbUser dbUser)
     {
         return new User
-        {
-            Id = dbUser.Id,
-            Name = dbUser.Name,
-            PasswordHash = dbUser.PasswordHash,
-            Role = dbUser.Role,
-            Wallet = new Wallet(dbUser.WalletBalance),
-            Bookings = dbUser.Bookings.Select(b => b.ToDomain()).ToList()
-        };
+        (
+            dbUser.Id,
+            dbUser.Name,
+            Email.Create(dbUser.Email),
+            dbUser.PasswordHash,
+            dbUser.Role,
+            Wallet.Create(dbUser.WalletBalance),
+            dbUser.Bookings.Select(b => b.ToDomain()).ToList()
+        );
     }
 }
 

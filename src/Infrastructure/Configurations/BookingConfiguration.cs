@@ -24,9 +24,5 @@ public class BookingConfiguration : IEntityTypeConfiguration<DbBooking>
         builder
           .Property(b => b.Cost)
           .HasColumnType("decimal(18,2)");
-
-        builder
-          .Property(b => b.Status)
-          .HasConversion<int>();
     }
 }

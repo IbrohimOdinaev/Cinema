@@ -54,12 +54,6 @@ public class HallRepository : IHallRepository
 
         if (dbHall is null) return null;
 
-        var toAdd = SeatsToAdd(hall.ToDb(), dbHall);
-        var toRemove = SeatsToRemove(hall.ToDb(), dbHall);
-
-        dbHall.Seats.RemoveAll(s => toRemove.Contains(s));
-        dbHall.Seats.AddRange(toAdd);
-
         dbHall.Title = hall.Title;
         await _context.SaveChangesAsync(token);
 

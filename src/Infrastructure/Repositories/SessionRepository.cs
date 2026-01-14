@@ -71,11 +71,6 @@ public class SessionRepository : ISessionRepository
         dbSession.Bookings.RemoveAll(s => toRemove.Contains(s));
         dbSession.Bookings.AddRange(toAdd);
 
-        dbSession.FilmId = session.FilmId;
-        dbSession.HallId = session.HallId;
-        dbSession.Start = session.Start;
-        dbSession.End = session.End;
-
         await _context.SaveChangesAsync(token);
 
         return session;

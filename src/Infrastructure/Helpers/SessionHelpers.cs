@@ -1,4 +1,5 @@
 using Cinema.Domain.Entities;
+using Cinema.Domain.ValueObjects;
 using Cinema.Infrastructure.DbEntities;
 
 namespace Cinema.Infrastructure.Helpers;
@@ -24,8 +25,8 @@ public static class SessionHelpers
             FilmId = session.FilmId,
             Hall = session.Hall?.ToDb(),
             Film = session.Film?.ToDb(),
-            Start = session.Start,
-            End = session.End,
+            Start = session.Duration.Start,
+            End = session.Duration.End,
             Bookings = session.Bookings.Select(b => b.ToDb()).ToList()
         };
     }
@@ -33,16 +34,15 @@ public static class SessionHelpers
     public static Session ToDomain(this DbSession dbSession)
     {
         return new Session
-        {
-            Id = dbSession.Id,
-            HallId = dbSession.HallId,
-            FilmId = dbSession.FilmId,
-            Hall = dbSession.Hall?.ToDomain(),
-            Film = dbSession.Film?.ToDomain(),
-            Start = dbSession.Start,
-            End = dbSession.End,
-            Bookings = dbSession.Bookings.Select(b => b.ToDomain()).ToList()
-        };
+        (
+            dbSession.Id,
+            dbSession.HallId,
+            dbSession.Hall?.ToDomain(),
+            dbSession.FilmId,
+            dbSession.Film?.ToDomain(),
+            Duration.Create(dbSession.Start, (int)dbSession.End.Subtract(dbSession.Start).TotalMinutes),
+            dbSession.Bookings.Select(b => b.ToDomain()).ToList()
+        );
     }
 }
 

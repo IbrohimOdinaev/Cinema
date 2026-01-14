@@ -4,5 +4,5 @@ namespace Cinema.Application.Abstractions.IRepositories;
 
 public interface ISeatRepository : IBaseRepository<Seat>
 {
-    IAsyncEnumerable<Seat> GetAllNotOccupiedAsync(CancellationToken token);
+    IAsyncEnumerable<Seat> GetByHallIdAsync(Guid id, CancellationToken token);
 }

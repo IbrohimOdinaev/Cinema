@@ -72,6 +72,7 @@ public class UserRepository : IUserRepository
 
         dbUser.Bookings.RemoveAll(s => toRemove.Contains(s));
         dbUser.Bookings.AddRange(toAdd);
+
         dbUser.Name = user.Name;
         dbUser.PasswordHash = user.PasswordHash;
         dbUser.WalletBalance = user.Wallet.Balance;

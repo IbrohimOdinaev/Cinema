@@ -56,8 +56,6 @@ public class BookingRepository : IBookingRepository
     {
         DbBooking dbBooking = entity.ToDb();
 
-        dbBooking.Cost = dbBooking.CalculateBookingCost();
-
         await _context.Bookings.AddAsync(dbBooking, token);
         await _context.SaveChangesAsync();
 
@@ -71,10 +69,6 @@ public class BookingRepository : IBookingRepository
         if (booking is null) return null;
 
         booking.Seats = entity.Seats;
-        booking.SessionId = entity.SessionId;
-        booking.Status = entity.Status;
-        booking.UserId = entity.UserId;
-        booking.Cost = booking.CalculateBookingCost();
 
         await _context.SaveChangesAsync(token);
 

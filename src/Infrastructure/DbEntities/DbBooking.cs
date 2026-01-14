@@ -16,7 +16,5 @@ public class DbBooking
 
     public decimal Cost { get; set; }
 
-    public Status Status { get; set; }
-
     public List<Guid> Seats { get; set; } = new();
 }

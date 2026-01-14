@@ -27,9 +27,9 @@ public class SeatRepository : ISeatRepository
         }
     }
 
-    public async IAsyncEnumerable<Seat> GetAllNotOccupiedAsync([EnumeratorCancellation] CancellationToken token)
+    public async IAsyncEnumerable<Seat> GetByHallIdAsync(Guid id, [EnumeratorCancellation] CancellationToken token)
     {
-        await foreach (var seat in _context.Seats.Where(s => !s.IsOccupied).AsAsyncEnumerable())
+        await foreach (var seat in _context.Seats.Where(s => s.HallId == id).OrderByDescending(s => s.Raw).ThenByDescending(s => s.Num).AsAsyncEnumerable())
         {
             yield return seat.ToDomain();
         }
@@ -64,8 +64,8 @@ public class SeatRepository : ISeatRepository
         if (dbSeat is null) return null;
 
         dbSeat.HallId = seat.HallId;
-        dbSeat.Num = seat.Num;
-        dbSeat.Raw = seat.Raw;
+        dbSeat.Num = seat.Position.Num;
+        dbSeat.Raw = seat.Position.Raw;
         dbSeat.IsOccupied = seat.IsOccupied;
 
         await _context.SaveChangesAsync(token);
