@@ -31,7 +31,7 @@ public class SessionRepository : ISessionRepository
     }
     public async IAsyncEnumerable<Session> GetAllAsync([EnumeratorCancellation] CancellationToken token)
     {
-        await foreach (var session in _context.Sessions)
+        await foreach (var session in _context.Sessions.Include(s => s.Film).AsAsyncEnumerable())
         {
             yield return session.ToDomain();
         }

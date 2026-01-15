@@ -3,7 +3,6 @@ using Cinema.Application.Abstractions.IRepositories;
 using Cinema.Application.Services.IServices;
 using Cinema.Domain.Entities;
 using AutoMapper;
-using Cinema.Domain.ValueObjects;
 using System.Runtime.CompilerServices;
 
 namespace Cinema.Application.Services;

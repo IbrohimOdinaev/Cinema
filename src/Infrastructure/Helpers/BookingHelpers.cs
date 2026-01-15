@@ -15,7 +15,7 @@ public static class BookingHelper
             SessionId = booking.SessionId,
             Session = booking.Session?.ToDb(context),
             Cost = booking.Cost,
-            Seats = booking.Seats.ToList()
+            Seats = booking.Seats
         };
     }
 
@@ -29,7 +29,7 @@ public static class BookingHelper
                 dbBooking.SessionId,
                 dbBooking.Session?.ToDomain(),
                 dbBooking.Cost,
-                dbBooking.Seats.ToList()
+                dbBooking.Seats
             );
     }
 }

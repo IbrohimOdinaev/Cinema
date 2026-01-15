@@ -8,6 +8,7 @@ public static class FilmHelpers
     public static DbFilm ToDb(this Film film, AppDbContext context)
     {
         var dbFilm = context.Films.Local.FirstOrDefault(f => f.Id == film.Id);
+
         if (dbFilm is not null)
         {
             return dbFilm;

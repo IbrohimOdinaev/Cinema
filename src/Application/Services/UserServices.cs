@@ -59,7 +59,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<UserResponse?> AddMoney(Guid id, CancellationToken token)
+    public async Task<UserResponse?> AddMoneyAsync(Guid id, CancellationToken token)
     {
         var user = await _userRepository.GetByIdAsync(id, token);
 
@@ -68,6 +68,15 @@ public class UserService : IUserService
         user.Wallet.Add(1000);
 
         await _userRepository.UpdateAsync(user, token);
+
+        return _mapper.Map<UserResponse>(user);
+    }
+
+    public async Task<UserResponse?> GetByIdAsync(Guid id, CancellationToken token)
+    {
+        var user = await _userRepository.GetByIdAsync(id, token);
+
+        if (user is null) return null;
 
         return _mapper.Map<UserResponse>(user);
     }

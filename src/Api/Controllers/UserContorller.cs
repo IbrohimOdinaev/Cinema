@@ -10,10 +10,12 @@ namespace Cinema.Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IBookingService _bookingService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IBookingService bookingService)
     {
         _userService = userService;
+        _bookingService = bookingService;
     }
 
     [HttpPost]
@@ -27,7 +29,7 @@ public class UserController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> AddMoney([FromRoute] Guid id, CancellationToken token)
     {
-        var result = await _userService.AddMoney(id, token);
+        var result = await _userService.AddMoneyAsync(id, token);
 
         return Ok(result);
     }

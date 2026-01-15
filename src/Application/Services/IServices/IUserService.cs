@@ -11,5 +11,5 @@ public interface IUserService
 
     IAsyncEnumerable<UserResponse> GetAllAsync(CancellationToken token);
 
-    Task<UserResponse?> AddMoney(Guid id, CancellationToken token = default);
+    Task<UserResponse?> AddMoneyAsync(Guid id, CancellationToken token = default);
 }

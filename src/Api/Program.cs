@@ -8,6 +8,7 @@ using Cinema.Application.Services.IServices;
 using Cinema.Infrastructure.Security;
 using Cinema.Application.MappingProfiles;
 using Cinema.Infrastructure.Repositories;
+using Cinema.Infrastructure.Security.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,9 @@ builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IHallService, HallService>();
 builder.Services.AddScoped<ISeatService, SeatService>();
 
+builder.Services.Configure<JwtSettings>(
+        builder.Configuration.GetSection("JwtSettings"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,8 +56,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-app.MapGet("/", () => Results.Ok("Hello world"));
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

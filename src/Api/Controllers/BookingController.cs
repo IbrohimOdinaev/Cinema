@@ -15,7 +15,7 @@ public class BookingController : ControllerBase
         _bookingService = bookingService;
     }
 
-    [HttpPut]
+    [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateBookingRequest bookingDto, CancellationToken token)
     {
         var result = await _bookingService.CreateAsync(bookingDto, token);

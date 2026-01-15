@@ -42,4 +42,9 @@ public class SessionService : ISessionService
             yield return _mapper.Map<SessionResponse>(session);
         }
     }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken token)
+    {
+        return await _sessionRepository.DeleteAsync(id);
+    }
 }

@@ -40,14 +40,14 @@ public class BookingService : IBookingService
         if (user.Wallet.Balance < bookingCost) return null;
 
         Booking booking = new(bookingDto.UserId, bookingDto.SessionId, bookingCost, bookingDto.Seats);
-
         await _uow.BeginAsync(token);
-
         try
         {
             user.Wallet.Deduct(booking.Cost);
+            var r1 = await _userRepository.UpdateAsync(user);
+            var r2 = await _bookingRepository.CreateAsync(booking, token);
 
-            await _bookingRepository.CreateAsync(booking, token);
+            if (r2 is null || r1 is null) throw new Exception();
 
             List<RawNum> positions = new();
 
@@ -56,10 +56,10 @@ public class BookingService : IBookingService
                 var seat = await _seatRepository.GetByIdAsync(seatId, token);
 
                 seat!.ChangeStatus(true);
-
+                await _seatRepository.UpdateAsync(seat);
                 positions.Add(new RawNum(seat.Position.Raw, seat.Position.Num));
             }
-
+            await _uow.CommitAsync();
             return new BookingResponse(booking.Id, session.Id, session.Film.Title, booking.Cost, positions);
         }
         catch (Exception)
