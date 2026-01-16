@@ -22,4 +22,10 @@ public class BookingController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpGet("user/{id:guid}")]
+    public IAsyncEnumerable<BookingResponse> GetUserBookings([FromRoute] Guid id, CancellationToken token)
+    {
+        return _bookingService.GetUserBookingsAsync(id, token);
+    }
 }

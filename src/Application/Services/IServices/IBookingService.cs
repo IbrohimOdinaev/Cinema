@@ -7,4 +7,6 @@ namespace Cinema.Application.Services.IServices;
 public interface IBookingService
 {
     Task<BookingResponse?> CreateAsync(CreateBookingRequest bookingDto, CancellationToken token = default);
+
+    IAsyncEnumerable<BookingResponse> GetUserBookingsAsync(Guid id, CancellationToken token);
 }

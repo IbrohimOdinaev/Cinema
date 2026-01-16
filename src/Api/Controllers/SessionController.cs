@@ -24,7 +24,13 @@ public class SessionController : ControllerBase
     {
         var result = await _sessionService.CreateAsync(sessionDto, token);
 
-        return Ok(result);
+        if (result.IsFailed)
+        {
+            return Ok(result.Errors.FirstOrDefault());
+        }
+
+        return Ok(result.Value);
+
     }
 
     [HttpGet]
@@ -33,6 +39,11 @@ public class SessionController : ControllerBase
         return _sessionService.GetAllAsync(token);
     }
 
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid id, CancellationToken token)
+    {
+        return Ok(await _sessionService.DeleteAsync(id, token));
+    }
 
 }
 

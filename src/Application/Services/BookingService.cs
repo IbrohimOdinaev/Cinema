@@ -44,6 +44,7 @@ public class BookingService : IBookingService
         try
         {
             user.Wallet.Deduct(booking.Cost);
+
             var r1 = await _userRepository.UpdateAsync(user);
             var r2 = await _bookingRepository.CreateAsync(booking, token);
 
@@ -69,4 +70,11 @@ public class BookingService : IBookingService
         }
     }
 
+    public async IAsyncEnumerable<BookingResponse> GetUserBookingsAsync(Guid id, [EnumeratorCancellation] CancellationToken token)
+    {
+        await foreach (var booking in _bookingRepository.GetByUserIdAsync(id, token))
+        {
+            yield return _mapper.Map<BookingResponse>(booking);
+        }
+    }
 }

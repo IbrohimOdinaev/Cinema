@@ -29,6 +29,15 @@ public class SessionRepository : ISessionRepository
                                 .FirstOrDefaultAsync(s => s.Id == id))?
                                 .ToDomain();
     }
+
+    public async IAsyncEnumerable<Session> GetByHallIdAsync(Guid id, [EnumeratorCancellation] CancellationToken token)
+    {
+        await foreach (var session in _context.Sessions.Include(s => s.Film).Where(s => s.HallId == id).AsAsyncEnumerable())
+        {
+            yield return session.ToDomain();
+        }
+    }
+
     public async IAsyncEnumerable<Session> GetAllAsync([EnumeratorCancellation] CancellationToken token)
     {
         await foreach (var session in _context.Sessions.Include(s => s.Film).AsAsyncEnumerable())

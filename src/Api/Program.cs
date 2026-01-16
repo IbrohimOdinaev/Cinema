@@ -9,6 +9,11 @@ using Cinema.Infrastructure.Security;
 using Cinema.Application.MappingProfiles;
 using Cinema.Infrastructure.Repositories;
 using Cinema.Infrastructure.Security.Auth;
+using Cinema.Domain.Policies;
+using Cinema.Domain.Abstractions;
+using Cinema.Infrastructure.Time;
+using Microsoft.Extensions.Options;
+using Cinema.Application.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,14 +50,31 @@ builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IHallService, HallService>();
 builder.Services.AddScoped<ISeatService, SeatService>();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddSingleton<IClock>(_ => new FixedTime(new DateTime(2026, 1, 15, 9, 0, 0)));
+}
+else
+{
+    builder.Services.AddSingleton<IClock, SystemClock>();
+}
+
 builder.Services.Configure<JwtSettings>(
         builder.Configuration.GetSection("JwtSettings"));
 
+builder.Services.Configure<Cinema.Application.Helpers.CinemaSettings>(
+        builder.Configuration.GetSection("CinemaSettings"));
+
+builder.Services.AddSingleton<ICinemaSettings>(sp =>
+        sp.GetRequiredService<IOptions<Cinema.Application.Helpers.CinemaSettings>>().Value);
+
+builder.Services.AddSingleton<SessionPolicy>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+
     app.UseSwagger();
     app.UseSwaggerUI();
 }
