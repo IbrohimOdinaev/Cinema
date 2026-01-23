@@ -4,16 +4,20 @@ using Cinema.Application.Abstractions.IRepositories;
 using static Cinema.Infrastructure.Helpers.SeatHelpers;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Cinema.Infrastructure.Helpers;
+using Cinema.Application.Abstractions;
 
 namespace Cinema.Infrastructure.Repositories;
 
 public class SeatRepository : ISeatRepository
 {
     private readonly AppDbContext _context;
+    private readonly IUnitOfWork _uow;
 
-    public SeatRepository(AppDbContext context)
+    public SeatRepository(AppDbContext context, IUnitOfWork uow)
     {
         _context = context;
+        _uow = uow;
     }
 
     public async Task<Seat?> GetByIdAsync(Guid id, CancellationToken token)
@@ -40,8 +44,7 @@ public class SeatRepository : ISeatRepository
         DbSeat dbSeat = entity.ToDb(_context);
 
         await _context.Seats.AddAsync(dbSeat, token);
-        await _context.SaveChangesAsync();
-
+        await _uow.SaveChangesAsync(token);
         return entity;
     }
 
@@ -52,8 +55,7 @@ public class SeatRepository : ISeatRepository
         if (seat is null) return false;
 
         _context.Seats.Remove(seat);
-        await _context.SaveChangesAsync(token);
-
+        await _uow.SaveChangesAsync(token);
         return true;
     }
 
@@ -68,7 +70,7 @@ public class SeatRepository : ISeatRepository
         dbSeat.Raw = seat.Position.Raw;
         dbSeat.IsOccupied = seat.IsOccupied;
 
-        await _context.SaveChangesAsync(token);
+        await _uow.SaveChangesAsync(token);
 
         return seat;
     }

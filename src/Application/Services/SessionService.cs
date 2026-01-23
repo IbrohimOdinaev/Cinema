@@ -7,6 +7,8 @@ using AutoMapper;
 using Cinema.Domain.Policies;
 using System.Runtime.CompilerServices;
 using FluentResults;
+using Cinema.Application.Exceptions;
+using Cinema.Domain.Exceptions;
 
 namespace Cinema.Application.Services;
 
@@ -47,13 +49,21 @@ public class SessionService : ISessionService
         {
             _sessionPolicy.Check(session.Duration.Start, session.Duration.End, timeSlots.AsReadOnly());
         }
-        catch (Exception ex)
+        catch (BusinessRuleException ex)
         {
             return Result.Fail(ex.Message);
         }
-        await _sessionRepository.CreateAsync(session, token);
 
-        return Result.Ok(_mapper.Map<SessionResponse>(session));
+        try
+        {
+            await _sessionRepository.CreateAsync(session, token);
+
+            return Result.Ok(_mapper.Map<SessionResponse>(session));
+        }
+        catch (ApplicationPersistenceException ex)
+        {
+            return Result.Fail(ex.Message);
+        }
     }
 
     public async IAsyncEnumerable<SessionResponse> GetAllAsync([EnumeratorCancellation] CancellationToken token)
@@ -64,8 +74,17 @@ public class SessionService : ISessionService
         }
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken token)
+    public async Task<Result> DeleteAsync(Guid id, CancellationToken token)
     {
-        return await _sessionRepository.DeleteAsync(id);
+        try
+        {
+            var result = await _sessionRepository.DeleteAsync(id);
+
+            return result == true ? Result.Ok() : Result.Fail("Session not found");
+        }
+        catch (ApplicationPersistenceException ex)
+        {
+            return Result.Fail(ex.Message);
+        }
     }
 }

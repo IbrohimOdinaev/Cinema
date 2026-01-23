@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+namespace Cinema.Api.Extensions;
+
 public static class DependencyInjection
 {
     public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)

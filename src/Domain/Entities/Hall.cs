@@ -1,4 +1,5 @@
 using Cinema.Domain.ValueObjects;
+using Cinema.Domain.Exceptions;
 
 namespace Cinema.Domain.Entities;
 
@@ -12,6 +13,11 @@ public class Hall
 
     public Hall(string title, int raws, int columns)
     {
+        if (raws < 0 || columns < 0)
+            throw new BusinessRuleException("Raws or Colument cannot be negative.");
+
+        if (string.IsNullOrWhiteSpace(title))
+            throw new DomainArgumentException("Title cannot be null or empty");
         var seats = new List<Seat>();
 
         for (int r = 1; r <= raws; r++)

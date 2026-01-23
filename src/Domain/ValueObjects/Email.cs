@@ -1,3 +1,4 @@
+using Cinema.Domain.Exceptions;
 namespace Cinema.Domain.ValueObjects;
 
 public sealed class Email
@@ -12,10 +13,10 @@ public sealed class Email
     public static Email Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException();
+            throw new DomainArgumentException("Email can't be null or empty.");
 
         if (!IsValidEmail(value))
-            throw new ArgumentException();
+            throw new BusinessRuleException("Uncorrect Email type.");
 
         return new Email(value);
     }

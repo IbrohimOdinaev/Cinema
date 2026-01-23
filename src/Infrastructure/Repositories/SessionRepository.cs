@@ -4,16 +4,20 @@ using Cinema.Application.Abstractions.IRepositories;
 using static Cinema.Infrastructure.Helpers.SessionHelpers;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Cinema.Infrastructure.Helpers;
+using Cinema.Application.Abstractions;
 
 namespace Cinema.Infrastructure.Repositories;
 
 public class SessionRepository : ISessionRepository
 {
     private readonly AppDbContext _context;
+    private readonly IUnitOfWork _uow;
 
-    public SessionRepository(AppDbContext context)
+    public SessionRepository(AppDbContext context, IUnitOfWork uow)
     {
         _context = context;
+        _uow = uow;
     }
 
     public async Task<Session?> GetByIdAsync(Guid id, CancellationToken token)
@@ -25,7 +29,6 @@ public class SessionRepository : ISessionRepository
                                 .Include(s => s.Hall)
                                   .ThenInclude(h => h!.Seats)
                                 .Include(s => s.Film)
-                                .Include(s => s.Bookings)
                                 .FirstOrDefaultAsync(s => s.Id == id))?
                                 .ToDomain();
     }
@@ -51,8 +54,8 @@ public class SessionRepository : ISessionRepository
         DbSession dbSession = entity.ToDb(_context);
 
         await _context.Sessions.AddAsync(dbSession, token);
-        await _context.SaveChangesAsync();
 
+        await _uow.SaveChangesAsync(token);
         return entity;
     }
 
@@ -63,7 +66,8 @@ public class SessionRepository : ISessionRepository
         if (session is null) return false;
 
         _context.Sessions.Remove(session);
-        await _context.SaveChangesAsync(token);
+
+        await _uow.SaveChangesAsync(token);
 
         return true;
     }
@@ -74,14 +78,10 @@ public class SessionRepository : ISessionRepository
 
         if (dbSession is null) return null;
 
-        var toAdd = BookingsToAdd(session.ToDb(_context), dbSession);
-        var toRemove = BookingsToRemove(session.ToDb(_context), dbSession);
+        dbSession.HallId = session.HallId;
+        dbSession.FilmId = session.FilmId;
 
-        dbSession.Bookings.RemoveAll(s => toRemove.Contains(s));
-        dbSession.Bookings.AddRange(toAdd);
-
-        await _context.SaveChangesAsync(token);
-
+        await _uow.SaveChangesAsync(token);
         return session;
     }
 }

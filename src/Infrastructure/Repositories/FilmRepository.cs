@@ -4,16 +4,20 @@ using Cinema.Application.Abstractions.IRepositories;
 using static Cinema.Infrastructure.Helpers.FilmHelpers;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Cinema.Infrastructure.Helpers;
+using Cinema.Application.Abstractions;
 
 namespace Cinema.Infrastructure.Repositories;
 
 public class FilmRepository : IFilmRepository
 {
     private readonly AppDbContext _context;
+    private readonly IUnitOfWork _uow;
 
-    public FilmRepository(AppDbContext context)
+    public FilmRepository(AppDbContext context, IUnitOfWork uow)
     {
         _context = context;
+        _uow = uow;
     }
 
     public async Task<Film?> GetByIdAsync(Guid id, CancellationToken token)
@@ -35,8 +39,7 @@ public class FilmRepository : IFilmRepository
         DbFilm dbFilm = entity.ToDb(_context);
 
         await _context.Films.AddAsync(dbFilm, token);
-        await _context.SaveChangesAsync();
-
+        await _uow.SaveChangesAsync(token);
         return entity;
     }
 
@@ -47,8 +50,7 @@ public class FilmRepository : IFilmRepository
         if (film is null) return false;
 
         _context.Films.Remove(film);
-        await _context.SaveChangesAsync(token);
-
+        await _uow.SaveChangesAsync(token);
         return true;
     }
 
@@ -62,7 +64,7 @@ public class FilmRepository : IFilmRepository
         dbFilm.Price = film.Price;
         dbFilm.Title = film.Title;
 
-        await _context.SaveChangesAsync(token);
+        await _uow.SaveChangesAsync(token);
 
         return film;
     }

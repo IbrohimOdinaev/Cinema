@@ -21,15 +21,10 @@ public class SessionConfiguration : IEntityTypeConfiguration<DbSession>
           .HasColumnType("timestamp without time zone");
 
         builder
-          .HasMany(s => s.Bookings)
-          .WithOne(b => b.Session)
-          .HasForeignKey(b => b.SessionId);
-
-        builder
-          .HasOne(s => s.Hall)
-          .WithMany()
-          .HasForeignKey(s => s.HallId)
-          .OnDelete(DeleteBehavior.Cascade);
+         .HasOne(s => s.Hall)
+         .WithMany()
+         .HasForeignKey(s => s.HallId)
+         .OnDelete(DeleteBehavior.Cascade);
 
         builder
           .HasOne(s => s.Film)

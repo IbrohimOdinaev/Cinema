@@ -12,7 +12,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<DbBooking>
 
         builder
           .HasOne(b => b.Session)
-          .WithMany(s => s.Bookings)
+          .WithMany()
           .HasForeignKey(b => b.SessionId);
 
         builder

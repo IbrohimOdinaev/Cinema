@@ -1,5 +1,6 @@
 using Cinema.Domain.ValueObjects;
 using Cinema.Domain.Enums;
+using Cinema.Domain.Exceptions;
 
 namespace Cinema.Domain.Entities;
 
@@ -27,9 +28,15 @@ public class User
         Role role
     )
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainArgumentException("Name cannot be null or empty.");
+
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            throw new DomainArgumentException("Password cannot be null or empty");
+
         Id = Guid.NewGuid();
         Name = name;
-        Email = email;
+        Email = email ?? throw new DomainArgumentException("Email cannot be null or empty.");
         PasswordHash = passwordHash;
         Role = role;
         Wallet = Wallet.Create(0);
@@ -57,20 +64,20 @@ public class User
     public void ChangeName(string newName)
     {
         if (string.IsNullOrWhiteSpace(newName))
-            throw new ArgumentException();
+            throw new DomainArgumentException("Name can't be null or empty.");
 
         Name = newName;
     }
 
     public void ChangeEmail(Email email)
     {
-        Email = email;
+        Email = email ?? throw new DomainArgumentException("Email cannot be null.");
     }
 
     public void ChangePasswordHash(string newPasswordHash)
     {
         if (string.IsNullOrWhiteSpace(newPasswordHash))
-            throw new ArgumentException();
+            throw new DomainArgumentException("Password can't be null or empty.");
 
         PasswordHash = newPasswordHash;
     }

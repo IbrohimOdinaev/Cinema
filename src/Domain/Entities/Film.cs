@@ -1,3 +1,5 @@
+using Cinema.Domain.Exceptions;
+
 namespace Cinema.Domain.Entities;
 
 public class Film
@@ -12,6 +14,14 @@ public class Film
 
     public Film(string title, decimal price, int duration)
     {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new DomainArgumentException("Title cannot be null or empty");
+
+        if (price < 0)
+            throw new DomainArgumentException("Price cannot be negative");
+
+        if (duration < 0)
+            throw new DomainArgumentException("Duration cannot be negative");
         Id = Guid.NewGuid();
         Title = title;
         Price = price;
@@ -26,9 +36,27 @@ public class Film
         Duration = duration;
     }
 
-    public void ChangeTitle(string newTitle) => Title = newTitle;
+    public void ChangeTitle(string newTitle)
+    {
+        if (string.IsNullOrWhiteSpace(newTitle))
+            throw new DomainArgumentException("Title cannot be null or empty.");
 
-    public void ChangePrice(decimal newPrice) => Price = newPrice;
+        Title = newTitle;
+    }
 
-    public void ChangeDuration(int newDuration) => Duration = newDuration;
+    public void ChangePrice(decimal newPrice)
+    {
+        if (Price < 0)
+            throw new DomainArgumentException("Price cannot be negative.");
+
+        Price = newPrice;
+    }
+
+    public void ChangeDuration(int newDuration)
+    {
+        if (newDuration < 0)
+            throw new DomainArgumentException("Duratin cannot be negative");
+
+        Duration = newDuration;
+    }
 }

@@ -15,6 +15,4 @@ public class DbSession
     public DateTime Start { get; set; }
 
     public DateTime End { get; set; }
-
-    public List<DbBooking> Bookings { get; set; } = new();
 }

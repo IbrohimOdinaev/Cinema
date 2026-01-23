@@ -1,4 +1,5 @@
 using Cinema.Domain.ValueObjects;
+using Cinema.Domain.Exceptions;
 
 namespace Cinema.Domain.Entities;
 
@@ -16,8 +17,6 @@ public class Session
 
     public Duration Duration { get; private set; }
 
-    public List<Booking> Bookings { get; private set; } = new();
-
     public Session
     (
         Guid hallId,
@@ -28,7 +27,7 @@ public class Session
         Id = Guid.NewGuid();
         HallId = hallId;
         FilmId = filmId;
-        Duration = duration;
+        Duration = duration ?? throw new DomainArgumentException("Duration cannot be null");
     }
 
     public Session
@@ -38,8 +37,7 @@ public class Session
         Hall? hall,
         Guid filmId,
         Film? film,
-        Duration duration,
-        List<Booking> bookings
+        Duration duration
     )
     {
         Id = id;
@@ -48,19 +46,18 @@ public class Session
         FilmId = filmId;
         Film = film;
         Duration = duration;
-        Bookings = bookings;
     }
 
     public void AttachHall(Hall? hall)
     {
-        if (Hall is not null || hall is null) throw new ArgumentException();
+        if (hall is null) throw new DomainArgumentException("Cannot attach null Hall");
 
         Hall = hall;
     }
 
     public void AttachFilm(Film? film)
     {
-        if (Film is not null || film is null) throw new ArgumentException();
+        if (film is null) throw new DomainArgumentException("Cannot attach null Film");
 
         Film = film;
     }

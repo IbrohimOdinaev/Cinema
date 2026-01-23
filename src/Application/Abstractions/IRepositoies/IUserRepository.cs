@@ -4,7 +4,7 @@ namespace Cinema.Application.Abstractions.IRepositories;
 
 public interface IUserRepository : IBaseRepository<User>
 {
-    Task<User?> GetByNameAsync(string name, CancellationToken token = default);
+    Task<User?> GetByEmailAsync(string name, CancellationToken token = default);
 
     Task<User?> GetByIdWithNavigationPropertyAsync(Guid id, CancellationToken tokne = default);
 }

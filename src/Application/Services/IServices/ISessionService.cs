@@ -9,5 +9,5 @@ public interface ISessionService
 
     IAsyncEnumerable<SessionResponse> GetAllAsync(CancellationToken token = default);
 
-    Task<bool> DeleteAsync(Guid id, CancellationToken token = default);
+    Task<Result> DeleteAsync(Guid id, CancellationToken token = default);
 }

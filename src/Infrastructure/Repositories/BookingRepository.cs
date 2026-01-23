@@ -4,7 +4,7 @@ using Cinema.Application.Abstractions.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using Cinema.Infrastructure.Helpers;
-
+using Cinema.Application.Abstractions;
 
 namespace Cinema.Infrastructure.Repositories;
 
@@ -12,10 +12,12 @@ namespace Cinema.Infrastructure.Repositories;
 public class BookingRepository : IBookingRepository
 {
     private readonly AppDbContext _context;
+    private readonly IUnitOfWork _uow;
 
-    public BookingRepository(AppDbContext context)
+    public BookingRepository(AppDbContext context, IUnitOfWork uow)
     {
         _context = context;
+        _uow = uow;
     }
 
     public async Task<Booking?> GetByIdAsync(Guid id, CancellationToken token)
@@ -57,7 +59,8 @@ public class BookingRepository : IBookingRepository
         DbBooking dbBooking = entity.ToDb(_context);
 
         await _context.Bookings.AddAsync(dbBooking, token);
-        await _context.SaveChangesAsync();
+
+        await _uow.SaveChangesAsync(token);
 
         return entity;
     }
@@ -70,7 +73,7 @@ public class BookingRepository : IBookingRepository
 
         booking.Seats = entity.Seats;
 
-        await _context.SaveChangesAsync(token);
+        await _uow.SaveChangesAsync();
 
         return booking.ToDomain();
     }
@@ -83,7 +86,7 @@ public class BookingRepository : IBookingRepository
 
         _context.Bookings.Remove(booking);
 
-        await _context.SaveChangesAsync();
+        await _uow.SaveChangesAsync();
 
         return true;
     }

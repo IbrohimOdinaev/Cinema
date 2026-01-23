@@ -4,6 +4,8 @@ using Cinema.Application.Services.IServices;
 using Cinema.Domain.Entities;
 using AutoMapper;
 using System.Runtime.CompilerServices;
+using FluentResults;
+using Cinema.Application.Exceptions;
 
 namespace Cinema.Application.Services;
 
@@ -26,32 +28,33 @@ public class HallService : IHallService
         }
     }
 
-    public async Task<HallResponse?> CreateAsync(CreateHallRequest hallDto, CancellationToken token)
+    public async Task<Result<HallResponse>> CreateAsync(CreateHallRequest hallDto, CancellationToken token)
     {
         Hall hall = new(hallDto.Title, hallDto.Raw, hallDto.Column);
+
         try
         {
             await _hallRepository.CreateAsync(hall, token);
 
-            return _mapper.Map<HallResponse>(hall);
+            return Result.Ok(_mapper.Map<HallResponse>(hall));
         }
-        catch (Exception)
+        catch (ApplicationPersistenceException ex)
         {
-            return null;
+            return Result.Fail(ex.Message);
         }
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken token)
+    public async Task<Result> DeleteAsync(Guid id, CancellationToken token)
     {
         try
         {
             bool result = await _hallRepository.DeleteAsync(id, token);
 
-            return result;
+            return result ? Result.Ok() : Result.Fail("Hall not found");
         }
-        catch (Exception)
+        catch (ApplicationPersistenceException ex)
         {
-            return false;
+            return Result.Fail(ex.Message);
         }
     }
 

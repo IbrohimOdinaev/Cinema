@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Cinema.Application.Services.IServices;
 using Cinema.Application.DTOS;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cinema.Api.Controllers;
 
@@ -17,20 +18,26 @@ public class HallController : ControllerBase
         _seatService = seatService;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateHallRequest hallDto, CancellationToken token)
     {
         var result = await _hallService.CreateAsync(hallDto, token);
 
-        return Ok(result);
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return BadRequest(result.Errors.First().Message);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public IAsyncEnumerable<HallResponse> GetAll(CancellationToken token)
     {
         return _hallService.GetAllAsync(token);
     }
 
+    [Authorize(Roles = "Admin, User")]
     [HttpGet("{id:guid}/seats")]
     public IAsyncEnumerable<SeatResponse> GetSeats([FromRoute] Guid id, CancellationToken token)
     {

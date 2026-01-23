@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 using AutoMapper;
 using Cinema.Application.Abstractions;
 using Cinema.Application.Services.IServices;
+using Cinema.Application.Exceptions;
+using FluentResults;
 
 namespace Cinema.Application.Services;
 
@@ -28,19 +30,20 @@ public class BookingService : IBookingService
         _seatRepository = seatRepository;
     }
 
-    public async Task<BookingResponse?> CreateAsync(CreateBookingRequest bookingDto, CancellationToken token)
+    public async Task<Result<BookingResponse>> CreateAsync(CreateBookingRequest bookingDto, Guid userId, CancellationToken token)
     {
         var session = await _sessionRepository.GetByIdWithNavigationPropertyAsync(bookingDto.SessionId, token);
-        var user = await _userRepository.GetByIdAsync(bookingDto.UserId, token);
-
-        if (session is null || user is null) return null;
+        var user = await _userRepository.GetByIdAsync(userId, token);
+        if (session is null || user is null)
+            return session is null ? Result.Fail("Session not found") : Result.Fail("User not found");
 
         decimal bookingCost = session.Film!.Price * bookingDto.Seats.Count();
+        if (user.Wallet.Balance < bookingCost) return Result.Fail("Not enough money");
 
-        if (user.Wallet.Balance < bookingCost) return null;
+        Booking booking = new(userId, bookingDto.SessionId, bookingCost, bookingDto.Seats);
 
-        Booking booking = new(bookingDto.UserId, bookingDto.SessionId, bookingCost, bookingDto.Seats);
         await _uow.BeginAsync(token);
+
         try
         {
             user.Wallet.Deduct(booking.Cost);
@@ -56,17 +59,22 @@ public class BookingService : IBookingService
             {
                 var seat = await _seatRepository.GetByIdAsync(seatId, token);
 
+                if (seat is null || seat.IsOccupied is true)
+                    throw new Exception();
+
                 seat!.ChangeStatus(true);
                 await _seatRepository.UpdateAsync(seat);
                 positions.Add(new RawNum(seat.Position.Raw, seat.Position.Num));
             }
+
             await _uow.CommitAsync();
+
             return new BookingResponse(booking.Id, session.Id, session.Film.Title, booking.Cost, positions);
         }
-        catch (Exception)
+        catch
         {
             await _uow.RollbackAsync(token);
-            return null;
+            return Result.Fail("Transaction Failed");
         }
     }
 

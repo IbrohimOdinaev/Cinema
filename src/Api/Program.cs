@@ -13,7 +13,8 @@ using Cinema.Domain.Policies;
 using Cinema.Domain.Abstractions;
 using Cinema.Infrastructure.Time;
 using Microsoft.Extensions.Options;
-using Cinema.Application.Helpers;
+using Cinema.Api;
+using Cinema.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +32,20 @@ builder.Services.AddControllers()
                             options.JsonSerializerOptions.Converters
                                 .Add(new JsonStringEnumConverter());
                         });
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddAutoMapper(cfg => { }, typeof(UserProfile).Assembly);
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
@@ -69,8 +80,11 @@ builder.Services.AddSingleton<ICinemaSettings>(sp =>
         sp.GetRequiredService<IOptions<Cinema.Application.Helpers.CinemaSettings>>().Value);
 
 builder.Services.AddSingleton<SessionPolicy>();
+
+builder.Services.AddAuth(builder.Configuration);
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -80,8 +94,8 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 app.Run();

@@ -1,3 +1,5 @@
+using Cinema.Domain.Exceptions;
+
 namespace Cinema.Domain.ValueObjects;
 
 public sealed class Duration
@@ -14,7 +16,7 @@ public sealed class Duration
     public static Duration Create(DateTime start, int filmDuration)
     {
         if (filmDuration <= 0)
-            throw new ArgumentException();
+            throw new DomainArgumentException("Film duration can't be negative.");
 
         return new(start, filmDuration);
     }

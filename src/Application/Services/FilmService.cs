@@ -4,6 +4,8 @@ using Cinema.Application.Services.IServices;
 using Cinema.Domain.Entities;
 using AutoMapper;
 using System.Runtime.CompilerServices;
+using Cinema.Application.Exceptions;
+using FluentResults;
 
 namespace Cinema.Application.Services;
 
@@ -26,7 +28,7 @@ public class FilmService : IFilmService
         }
     }
 
-    public async Task<FilmResponse?> CreateAsync(CreateFilmRequest filmDto, CancellationToken token)
+    public async Task<Result<FilmResponse>> CreateAsync(CreateFilmRequest filmDto, CancellationToken token)
     {
         var film = _mapper.Map<Film>(filmDto);
 
@@ -34,25 +36,25 @@ public class FilmService : IFilmService
         {
             await _filmRepository.CreateAsync(film, token);
 
-            return _mapper.Map<FilmResponse>(film);
+            return Result.Ok(_mapper.Map<FilmResponse>(film));
         }
-        catch (Exception)
+        catch (ApplicationPersistenceException ex)
         {
-            return null;
+            return Result.Fail(ex.Message);
         }
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken token)
+    public async Task<Result> DeleteAsync(Guid id, CancellationToken token)
     {
         try
         {
             bool result = await _filmRepository.DeleteAsync(id, token);
 
-            return result;
+            return result ? Result.Ok() : Result.Fail("Film not found");
         }
-        catch (Exception)
+        catch (ApplicationPersistenceException ex)
         {
-            return false;
+            return Result.Fail(ex.Message);
         }
     }
 }

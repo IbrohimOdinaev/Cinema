@@ -1,13 +1,13 @@
-using Cinema.Domain.Entities;
 using Cinema.Application.DTOS;
+using FluentResults;
 
 namespace Cinema.Application.Services.IServices;
 
 public interface IFilmService
 {
-    Task<FilmResponse?> CreateAsync(CreateFilmRequest filmDto, CancellationToken token = default);
+    Task<Result<FilmResponse>> CreateAsync(CreateFilmRequest filmDto, CancellationToken token = default);
 
-    Task<bool> DeleteAsync(Guid id, CancellationToken token = default);
+    Task<Result> DeleteAsync(Guid id, CancellationToken token = default);
 
     IAsyncEnumerable<FilmResponse> GetAllAsync(CancellationToken token);
 }

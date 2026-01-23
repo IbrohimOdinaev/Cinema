@@ -3,5 +3,5 @@ namespace Cinema.Application.Abstractions;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(Guid userId, string name, string email, Role role);
+    Task<string> GenerateToken(Guid userId, string name, string email, Role role);
 }

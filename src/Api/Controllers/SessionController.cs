@@ -1,6 +1,7 @@
 using Cinema.Application.DTOS;
 using Cinema.Application.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cinema.Api.Controllers;
 
@@ -19,6 +20,7 @@ public class SessionController : ControllerBase
         _hallService = hallService;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateSessionRequest sessionDto, CancellationToken token)
     {
@@ -26,25 +28,31 @@ public class SessionController : ControllerBase
 
         if (result.IsFailed)
         {
-            return Ok(result.Errors.FirstOrDefault());
+            return Ok(result.Errors.First().Message);
         }
 
         return Ok(result.Value);
 
     }
 
+    [Authorize(Roles = "User, Admin")]
     [HttpGet]
     public IAsyncEnumerable<SessionResponse> GetAll(CancellationToken token)
     {
         return _sessionService.GetAllAsync(token);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id, CancellationToken token)
     {
-        return Ok(await _sessionService.DeleteAsync(id, token));
-    }
+        var result = await _sessionService.DeleteAsync(id, token);
 
+        if (result.IsSuccess)
+            return Ok();
+
+        return BadRequest(result.Errors.First().Message);
+    }
 }
 
 

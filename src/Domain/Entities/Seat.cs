@@ -1,4 +1,5 @@
 using Cinema.Domain.ValueObjects;
+using Cinema.Domain.Exceptions;
 
 namespace Cinema.Domain.Entities;
 
@@ -17,7 +18,7 @@ public class Seat
         Id = Guid.NewGuid();
         HallId = hallId;
         IsOccupied = false;
-        Position = position;
+        Position = position ?? throw new DomainArgumentException("Position cannot be null");
     }
 
     public Seat(Guid id, Guid hallId, bool isOccupied, Position position)

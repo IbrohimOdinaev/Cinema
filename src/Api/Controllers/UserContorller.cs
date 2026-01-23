@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Cinema.Application.Services.IServices;
-using System.Runtime.CompilerServices;
 using Cinema.Application.DTOS;
-
+using Microsoft.AspNetCore.Authorization;
+using static Cinema.Api.Extensions.ClaimExtensions;
+using Microsoft.AspNetCore.Authorization;
 namespace Cinema.Api.Controllers;
 
 [ApiController]
@@ -18,25 +19,74 @@ public class UserController : ControllerBase
         _bookingService = bookingService;
     }
 
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginDto, CancellationToken token)
+    {
+        var result = await _userService.LoginAsync(loginDto, token);
+
+        if (result.IsSuccess)
+            return Ok(new { accessToken = result.Value });
+
+        return BadRequest(result.Errors.First().Message);
+    }
+
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserRequest userDto, CancellationToken token)
     {
         var result = await _userService.CreateAsync(userDto, token);
 
-        return Ok(result);
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return BadRequest(result.Errors.First().Message);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> AddMoney([FromRoute] Guid id, CancellationToken token)
+    [Authorize]
+    [HttpPut("{amount:decimal}")]
+    public async Task<IActionResult> AddMoney(decimal amount, CancellationToken token)
     {
-        var result = await _userService.AddMoneyAsync(id, token);
+        Guid userId = User.GetUserId();
 
-        return Ok(result);
+        var result = await _userService.AddMoneyAsync(amount, userId);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        return BadRequest(result.Errors.First().Message);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public IAsyncEnumerable<UserResponse> GetAll(CancellationToken token)
     {
         return _userService.GetAllAsync(token);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("/createAdmin")]
+    public async Task<IActionResult> CreateAdmin(CancellationToken token)
+    {
+        var result = await _userService.CreateAdminAsync(token);
+
+        if (result.IsSuccess)
+            return Ok("Admin created");
+
+        return BadRequest(result.Errors.First().Message);
+    }
+
+    [Authorize(Roles = "User")]
+    [HttpDelete]
+    public async Task<IActionResult> Delete(CancellationToken token)
+    {
+        Guid userId = User.GetUserId();
+
+        var result = await _userService.DeleteAsync(userId);
+
+        if (result.IsSuccess)
+            return Ok("Account has been deleted");
+
+        return BadRequest(result.Errors.First().Message);
     }
 }

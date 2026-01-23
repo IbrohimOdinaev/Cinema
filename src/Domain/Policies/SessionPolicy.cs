@@ -21,22 +21,21 @@ public class SessionPolicy
     public void Check(DateTime start, DateTime end, IReadOnlyCollection<SessionTimeSlot> existingSessions)
     {
         DateTime now = _clock.Now;
-        //        throw new Exception($"{_settings.OpeningHour}, {_settings.ClosingHour}, {_settings.MinMinuteAddSession}, {_settings.MaxDaysAddSession}");
 
         DateTime lastAllowedDay = now.AddDays(_settings.MaxDaysAddSession);
 
         if (start < now.AddMinutes(_settings.MinMinuteAddSession))
-            throw new PolicyException($"{_clock.Now} Session must add not less than {_settings.MinMinuteAddSession}");
+            throw new BusinessRuleException($"{_clock.Now} Session must add not less than {_settings.MinMinuteAddSession}");
 
         if (start > lastAllowedDay)
-            throw new PolicyException($"Session could add before {_settings.MaxDaysAddSession} days!");
+            throw new BusinessRuleException($"Session could add before {_settings.MaxDaysAddSession} days!");
 
         if (!(start.Hour * 60 + start.Minute >= _settings.OpeningHour * 60 && end.Hour * 60 + end.Minute <= _settings.ClosingHour * 60 && end.Day == start.Day))
-            throw new PolicyException($"Cinema is closed. Works: {_settings.OpeningHour} to {_settings.ClosingHour})");
+            throw new BusinessRuleException($"Cinema is closed. Works: {_settings.OpeningHour} to {_settings.ClosingHour})");
 
         foreach (var timeSlot in existingSessions)
         {
-            if (Overlaps(timeSlot, TimeSpan.FromMinutes(10))) throw new PolicyException($"Diffrence between session must be more than 10 minutes");
+            if (Overlaps(timeSlot, TimeSpan.FromMinutes(10))) throw new BusinessRuleException($"Diffrence between session must be more than 10 minutes");
         }
 
         bool Overlaps(SessionTimeSlot other, TimeSpan minGap)

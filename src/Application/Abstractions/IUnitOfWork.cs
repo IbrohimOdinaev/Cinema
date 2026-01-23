@@ -7,4 +7,6 @@ public interface IUnitOfWork
     Task CommitAsync(CancellationToken token = default);
 
     Task RollbackAsync(CancellationToken token = default);
+
+    Task SaveChangesAsync(CancellationToken token = default);
 }

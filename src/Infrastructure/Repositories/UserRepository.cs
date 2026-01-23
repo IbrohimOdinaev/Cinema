@@ -4,23 +4,27 @@ using Cinema.Application.Abstractions.IRepositories;
 using static Cinema.Infrastructure.Helpers.UserHelpers;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Cinema.Infrastructure.Helpers;
+using Cinema.Application.Abstractions;
 
 namespace Cinema.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
     private readonly AppDbContext _context;
+    private readonly IUnitOfWork _uow;
 
-    public UserRepository(AppDbContext context)
+    public UserRepository(AppDbContext context, IUnitOfWork uow)
     {
         _context = context;
+        _uow = uow;
     }
 
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken token)
         => (await _context.Users.FindAsync(id, token))?.ToDomain();
 
-    public async Task<User?> GetByNameAsync(string name, CancellationToken token)
-        => (await _context.Users.FirstOrDefaultAsync(u => EF.Functions.ILike(u.Name, $"%{name}%")))?.ToDomain();
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken token)
+        => (await _context.Users.FirstOrDefaultAsync(u => EF.Functions.ILike(u.Email, $"%{email}%")))?.ToDomain();
 
     public async Task<User?> GetByIdWithNavigationPropertyAsync(Guid id, CancellationToken token)
         => (await _context.Users
@@ -44,8 +48,7 @@ public class UserRepository : IUserRepository
         DbUser dbUser = entity.ToDb(_context);
 
         await _context.Users.AddAsync(dbUser, token);
-        await _context.SaveChangesAsync();
-
+        await _uow.SaveChangesAsync(token);
         return entity;
     }
 
@@ -56,10 +59,10 @@ public class UserRepository : IUserRepository
         if (user is null) return false;
 
         _context.Users.Remove(user);
-        await _context.SaveChangesAsync(token);
-
+        await _uow.SaveChangesAsync(token);
         return true;
     }
+
 
     public async Task<User?> UpdateAsync(User user, CancellationToken token)
     {
@@ -76,9 +79,7 @@ public class UserRepository : IUserRepository
         dbUser.Name = user.Name;
         dbUser.PasswordHash = user.PasswordHash;
         dbUser.WalletBalance = user.Wallet.Balance;
-
-        await _context.SaveChangesAsync(token);
-
+        await _uow.SaveChangesAsync(token);
         return user;
     }
 }

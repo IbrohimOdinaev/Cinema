@@ -1,12 +1,11 @@
 using Cinema.Application.DTOS;
-using Cinema.Application.Services;
-using Cinema.Domain.Entities;
+using FluentResults;
 
 namespace Cinema.Application.Services.IServices;
 
 public interface IBookingService
 {
-    Task<BookingResponse?> CreateAsync(CreateBookingRequest bookingDto, CancellationToken token = default);
+    Task<Result<BookingResponse>> CreateAsync(CreateBookingRequest bookingDto, Guid userId, CancellationToken token = default);
 
     IAsyncEnumerable<BookingResponse> GetUserBookingsAsync(Guid id, CancellationToken token);
 }

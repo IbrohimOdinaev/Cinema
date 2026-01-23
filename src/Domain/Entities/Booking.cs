@@ -1,3 +1,5 @@
+using Cinema.Domain.Exceptions;
+
 namespace Cinema.Domain.Entities;
 
 public class Booking
@@ -24,6 +26,9 @@ public class Booking
         List<Guid> seats
     )
     {
+        if (cost < 0)
+            throw new DomainArgumentException("Cost cannot be negative");
+
         Id = Guid.NewGuid();
         UserId = userId;
         SessionId = sessionId;
@@ -53,14 +58,16 @@ public class Booking
 
     public void AttachUser(User? user)
     {
-        if (User is not null || user is null) throw new ArgumentException();
+        if (user is null)
+            throw new DomainArgumentException("Cannot attach null User");
 
         User = user;
     }
 
     public void AttachSession(Session? session)
     {
-        if (Session is not null || session is null) throw new ArgumentException();
+        if (session is null)
+            throw new DomainArgumentException("Cannot attach null session");
 
         Session = session;
     }

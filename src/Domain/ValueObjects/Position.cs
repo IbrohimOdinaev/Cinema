@@ -1,3 +1,5 @@
+using Cinema.Domain.Exceptions;
+
 namespace Cinema.Domain.ValueObjects;
 
 public class Position
@@ -14,7 +16,7 @@ public class Position
     public static Position Create(int raw, int num)
     {
         if (raw <= 0 || num <= 0)
-            throw new ArgumentException();
+            throw new DomainArgumentException("Position can't be negative.");
 
         return new Position(raw, num);
     }
